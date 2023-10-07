@@ -1,13 +1,31 @@
-import { Entity, ObjectIdColumn, Column } from "typeorm";
+import {
+  Entity,
+  ObjectIdColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity({ name: "users" })
-export class Users {
+export class User {
   @ObjectIdColumn()
   id!: string;
 
   @Column()
-  username!: string;
+  name!: string;
+
+  @Column()
+  email!: string;
 
   @Column()
   password!: string;
+
+  @Column()
+  database!: string;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 }

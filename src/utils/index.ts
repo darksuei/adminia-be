@@ -1,6 +1,3 @@
-const bcrypt = require("bcrypt");
+import * as utils from "./utils";
 
-export const hashString = async (str: string) => {
-  const hash = await bcrypt.hash(str, 10);
-  return hash;
-};
+export { utils };
