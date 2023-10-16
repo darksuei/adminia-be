@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { userDto } from "../../@types";
 import { utils } from "../utils";
 import { SALT_ROUNDS } from "../constants";
@@ -10,22 +10,34 @@ import { User } from "../entities/users";
 //packages
 const bcrypt = require("bcrypt");
 
-export const getUser = async (req: userDto.userRequest, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+export const getUser = async (
+  req: userDto.userRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
-  const userRepository = AppDataSource.getRepository(User);
-  let user = await userRepository.findOneBy({ email: req.user?.email });
+    const userRepository = AppDataSource.getRepository(User);
+    let user = await userRepository.findOneBy({ email: req.user?.email });
 
-  if (!user) {
-    user = await userRepository.findOneBy({ name: req.user?.name });
+    if (!user) {
+      user = await userRepository.findOneBy({ name: req.user?.name });
+    }
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user!.password = ""; // USE TYPEORM SELECT
+    return res.status(200).json({ message: "User found", user });
+  } catch (err) {
+    next(err);
   }
-  if (!user) return res.status(404).json({ message: "User not found" });
-
-  user!.password = ""; // USE TYPEORM SELECT
-  return res.status(200).json({ message: "User found", user });
 };
 
-export const signInUser = async (req: Request, res: Response) => {
+export const signInUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, email, password } = <userDto.authType>req.body;
   if (!email || !name)
     return res.status(400).json({ message: "Incomplete Details" });
@@ -55,12 +67,15 @@ export const signInUser = async (req: Request, res: Response) => {
       user: { ...user, token, expiresIn: "1d" },
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "An Error Occurred" });
+    next(error);
   }
 };
 
-export const signUpUser = async (req: Request, res: Response) => {
+export const signUpUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, email, password } = <userDto.authType>req.body;
 
   if (!name || !email || !password)
@@ -92,8 +107,7 @@ export const signUpUser = async (req: Request, res: Response) => {
       user: { ...user, token, expiresIn: "1d" },
     });
   } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "An Error Occurred." });
+    next(error);
   }
 };
 
@@ -112,7 +126,11 @@ export const updateUser = async (req: userDto.userRequest, res: Response) => {
   return res.status(200).json({ message: "User found", user: newuser });
 };
 
-export const deleteUser = async (req: userDto.userRequest, res: Response) => {
+export const deleteUser = async (
+  req: userDto.userRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
@@ -126,7 +144,6 @@ export const deleteUser = async (req: userDto.userRequest, res: Response) => {
     await userRepository.delete(user.id);
     return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "An Error Occurred" });
+    next(error);
   }
 };

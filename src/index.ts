@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
+import { ErrorHandler } from "./middlewares/error.middleware";
 
 // import model
 import { User } from "./entities/users";
@@ -20,6 +21,9 @@ import routes from "./routes";
 // register routes
 app.use("/api", routes.userRouter);
 app.use("/api", routes.queryRouter);
+
+//Error handler is last middleware
+app.use(ErrorHandler);
 
 app.get("*", (req: Request, res: Response) => {
   res.send("Server Running!");
