@@ -39,7 +39,7 @@ export const signInUser = async (
   next: NextFunction
 ) => {
   const { name, email, password } = <userDto.authType>req.body;
-  if (!email || !name)
+  if (!email && !password)
     return res.status(400).json({ message: "Incomplete Details" });
 
   try {

@@ -23,6 +23,21 @@ export class User {
   @Column()
   database!: string;
 
+  @Column()
+  connectionString!: string;
+
+  @Column()
+  databaseUserName!: string;
+
+  @Column()
+  databasePassword!: string;
+
+  @Column()
+  tableName!: string;
+
+  @Column()
+  projectName!: string;
+
   @CreateDateColumn()
   created_at!: Date;
 

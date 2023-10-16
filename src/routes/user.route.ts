@@ -15,7 +15,7 @@ router.get("/user", auth, getUser);
 
 router.post("/user", signInUser);
 
-router.put("/user", auth, updateUser);
+router.patch("/user", auth, updateUser);
 
 router.delete("/user", auth, deleteUser);
 

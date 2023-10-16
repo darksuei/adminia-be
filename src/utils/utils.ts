@@ -87,7 +87,6 @@ export const fetchDataFromMongoDB = async (
     const collection = db.collection(tableName);
 
     const result = await collection.find({}).toArray();
-    console.log(result);
     return result;
   } catch (error) {
     console.error("Error:", error);
