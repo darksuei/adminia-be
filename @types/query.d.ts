@@ -16,3 +16,8 @@ export interface InsertQueryDto extends QueryDto {
 export interface DeleteQueryDto extends QueryDto {
   idToDelete: Condition<ObjectId> | undefined;
 }
+
+export interface UpdateQueryDto extends QueryDto {
+  idToUpdate: Condition<ObjectId> | undefined;
+  updateData: any;
+}

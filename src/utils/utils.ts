@@ -5,10 +5,10 @@ import {
   QueryDto,
   InsertQueryDto,
   DeleteQueryDto,
+  UpdateQueryDto,
 } from "../../@types";
 import { createUserDataSource } from "./userOrm.config";
 import { MongoClient, ObjectId } from "mongodb";
-import { Condition } from "typeorm";
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -227,7 +227,68 @@ export const insertToUserDB = async ({
   }
 };
 
-export const updateUserDB = async () => {};
+const updateMongoDataById = async ({
+  connectionString,
+  tableName,
+  dbType,
+  idToUpdate,
+  updateData,
+}: UpdateQueryDto) => {
+  const client = new MongoClient(connectionString);
+
+  try {
+    await client.connect();
+    const db = client.db();
+
+    const collection = db.collection(tableName);
+    const objectIdToUpdate = new ObjectId(idToUpdate);
+
+    const result = await collection.updateOne(
+      { _id: objectIdToUpdate },
+      {
+        $set: updateData,
+      }
+    );
+    if (result.modifiedCount === 1) {
+      console.log("Document with ID", idToUpdate, "updated successfully.");
+    } else {
+      console.log("Document not found or no changes made.");
+    }
+    return result;
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("Insert Failed");
+  } finally {
+    await client.close();
+  }
+};
+
+export const updateUserDB = async ({
+  connectionString,
+  tableName,
+  idToUpdate,
+  dbType,
+  updateData,
+}: UpdateQueryDto) => {
+  try {
+    let result;
+    if (dbType === "mongodb") {
+      result = updateMongoDataById({
+        connectionString,
+        tableName,
+        dbType,
+        idToUpdate,
+        updateData,
+      });
+    } else {
+      result = null;
+    }
+    return result;
+  } catch (err) {
+    console.error(err);
+    return new Error("Internal Server Error");
+  }
+};
 
 export const deleteUserDB = async ({
   connectionString,
@@ -243,6 +304,54 @@ export const deleteUserDB = async ({
         tableName,
         dbType,
         idToDelete,
+      });
+    } else {
+      result = null;
+    }
+    return result;
+  } catch (err) {
+    console.error(err);
+    return new Error("Internal Server Error");
+  }
+};
+
+export const deleteAllMongoData = async ({
+  connectionString,
+  tableName,
+  dbType,
+}: QueryDto) => {
+  try {
+    const client = new MongoClient(connectionString);
+
+    await client.connect();
+    const db = client.db();
+
+    const collection = db.collection(tableName);
+
+    const result = await collection.deleteMany({});
+    if (result.deletedCount) {
+      console.log("Whole Document deleted successfully.");
+    } else {
+      console.log("Did not delete successfully.");
+    }
+  } catch (err) {
+    console.error(err);
+    return new Error("Internal Server Error");
+  }
+};
+
+export const deleteAllUserDB = async ({
+  connectionString,
+  tableName,
+  dbType,
+}: QueryDto) => {
+  try {
+    let result;
+    if (dbType === "mongodb") {
+      result = deleteAllMongoData({
+        connectionString,
+        tableName,
+        dbType,
       });
     } else {
       result = null;
