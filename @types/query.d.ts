@@ -6,3 +6,7 @@ export interface QueryDto {
   password?: string;
   tableName: string;
 }
+
+export interface InsertQueryDto extends QueryDto {
+  new_data: any;
+}

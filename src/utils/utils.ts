@@ -1,8 +1,8 @@
 import { User } from "../entities/users";
 import { AppDataSource } from "../../orm.config";
-import { userDto, QueryDto } from "../../@types";
+import { userDto, QueryDto, InsertQueryDto } from "../../@types";
 import { createUserDataSource } from "./userOrm.config";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -95,6 +95,34 @@ export const fetchDataFromMongoDB = async (
   }
 };
 
+export const insertDataToMongoDB = async (
+  connectionString: string,
+  tableName: string,
+  new_data: any
+) => {
+  const client = new MongoClient(connectionString);
+
+  try {
+    await client.connect();
+    const db = client.db();
+
+    const collection = db.collection(tableName);
+
+    const documentWithId = {
+      _id: new ObjectId(Math.random() * 99999999999), //INTERESTING FIX HEHE
+      ...new_data,
+    };
+
+    const result = await collection.insertOne(documentWithId);
+    return result;
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("Insert Failed");
+  } finally {
+    await client.close();
+  }
+};
+
 export const fetchDB = async ({
   connectionString,
   dbType,
@@ -126,6 +154,36 @@ export const fetchDB = async ({
     }
     return result;
   } catch (err) {
+    return new Error("Internal Server Error");
+  }
+};
+
+export const insertToUserDB = async ({
+  new_data,
+  dbType,
+  connectionString,
+  tableName,
+}: InsertQueryDto) => {
+  try {
+    let result;
+    if (dbType === "mongodb") {
+      result = insertDataToMongoDB(connectionString, tableName, new_data);
+    } else {
+      const userDataSource = await userDatabaseConnection({
+        connectionString,
+        dbType,
+        tableName,
+      });
+      result = await userDataSource //NEEDS FURTHER TESTING
+        .createQueryBuilder()
+        .insert()
+        .into(tableName)
+        .values(new_data)
+        .execute();
+    }
+    return result;
+  } catch (err) {
+    console.error(err);
     return new Error("Internal Server Error");
   }
 };
