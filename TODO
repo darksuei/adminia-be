@@ -6,6 +6,6 @@
 
 - create endpoint for delete user db
 
-- create endpoint for update/insert/get to user db
+- create endpoint for update to user db
 
 - Polish code

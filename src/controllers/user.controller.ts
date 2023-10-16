@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { userDto } from "../../@types";
+import { userDto, QueryDto } from "../../@types";
 import { utils } from "../utils";
 import { SALT_ROUNDS } from "../constants";
 
 //db deets
 import { AppDataSource } from "../../orm.config";
 import { User } from "../entities/users";
+import { fetchDB } from "../utils/utils";
 
 //packages
 const bcrypt = require("bcrypt");
@@ -27,7 +28,16 @@ export const getUser = async (
     if (!user) return res.status(404).json({ message: "User not found" });
 
     user!.password = ""; // USE TYPEORM SELECT
-    return res.status(200).json({ message: "User found", user });
+
+    //get the database
+    const { connectionString, database, tableName } = user;
+    const result = await fetchDB({
+      connectionString,
+      dbType: database as QueryDto["dbType"],
+      tableName,
+    });
+
+    return res.status(200).json({ message: "User found", user, data: result });
   } catch (err) {
     next(err);
   }
