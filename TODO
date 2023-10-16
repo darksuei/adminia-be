@@ -1,11 +1,11 @@
 - Error middleware (done)
 
-- Post db details should be a patch req to normal db
+- Post db details should be a patch req to normal db (done)
 
 - Get db should be a fn on get user so it does both
 
 - create endpoint for delete user db
 
-- create endpoint for update/insert to user db
+- create endpoint for update/insert/get to user db
 
 - Polish code

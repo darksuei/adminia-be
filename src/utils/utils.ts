@@ -94,3 +94,38 @@ export const fetchDataFromMongoDB = async (
     await client.close();
   }
 };
+
+export const fetchDB = async ({
+  connectionString,
+  dbType,
+  tableName,
+}: QueryDto) => {
+  try {
+    if (!connectionString || !dbType || !tableName)
+      return new Error("Invalid Request, Incomplete Parameters");
+
+    if (dbType !== "mysql" && dbType !== "postgres" && dbType !== "mongodb")
+      return new Error("Unsupported database!");
+
+    let result;
+
+    if (dbType === "mongodb") {
+      result = await fetchDataFromMongoDB(connectionString, tableName);
+    } else {
+      const userDataSource = await userDatabaseConnection({
+        connectionString,
+        dbType,
+        tableName,
+      });
+      result = await userDataSource
+        .createQueryBuilder()
+        .select()
+        .from(tableName, "userTable")
+        .addSelect("*") // Select all columns
+        .getRawMany();
+    }
+    return result;
+  } catch (err) {
+    return new Error("Internal Server Error");
+  }
+};
