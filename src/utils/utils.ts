@@ -1,9 +1,13 @@
 import { User } from "../entities/users";
 import { AppDataSource } from "../../orm.config";
-import { userDto } from "../../@types";
+import { userDto, QueryDto } from "../../@types";
+import { createUserDataSource } from "./userOrm.config";
+import { MongoClient } from "mongodb";
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const createUser = async ({
@@ -47,4 +51,47 @@ export const generateToken = ({ name, email, password }: userDto.authType) => {
 export const hashString = async (str: string) => {
   const hash = await bcrypt.hash(str, 10);
   return hash;
+};
+
+export const userDatabaseConnection = async ({
+  dbType,
+  connectionString,
+  tableName,
+}: QueryDto) => {
+  const userDataSource = await createUserDataSource({
+    dbType,
+    connectionString,
+    tableName,
+  });
+  userDataSource
+    .initialize()
+    .then(() => {
+      console.log("User Data Source has been initialized!");
+    })
+    .catch((err) => {
+      console.error("Error during Data Source initialization", err);
+    });
+  return userDataSource;
+};
+
+export const fetchDataFromMongoDB = async (
+  connectionString: string,
+  tableName: string
+) => {
+  const client = new MongoClient(connectionString);
+
+  try {
+    await client.connect();
+    const db = client.db();
+
+    const collection = db.collection(tableName);
+
+    const result = await collection.find({}).toArray();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    await client.close();
+  }
 };

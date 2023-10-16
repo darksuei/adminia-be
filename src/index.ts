@@ -19,6 +19,7 @@ import routes from "./routes";
 
 // register routes
 app.use("/api", routes.userRouter);
+app.use("/api", routes.queryRouter);
 
 app.get("*", (req: Request, res: Response) => {
   res.send("Server Running!");
