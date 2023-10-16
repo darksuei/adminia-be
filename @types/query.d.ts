@@ -1,3 +1,5 @@
+import { Condition } from "typeorm";
+
 export interface QueryDto {
   projectName?: string;
   connectionString: string;
@@ -9,4 +11,8 @@ export interface QueryDto {
 
 export interface InsertQueryDto extends QueryDto {
   new_data: any;
+}
+
+export interface DeleteQueryDto extends QueryDto {
+  idToDelete: Condition<ObjectId> | undefined;
 }

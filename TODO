@@ -2,7 +2,7 @@
 
 - Post db details should be a patch req to normal db (done)
 
-- Get db should be a fn on get user so it does both
+- Get db should be a fn on get user so it does both (done)
 
 - create endpoint for delete user db
 

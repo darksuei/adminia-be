@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { QueryDto, userDto } from "../../@types";
+import { QueryDto, userDto, DeleteQueryDto } from "../../@types";
 import {
-  userDatabaseConnection,
-  fetchDataFromMongoDB,
   fetchDB,
   insertToUserDB,
+  updateUserDB,
+  deleteUserDB,
 } from "../utils/utils";
 
 //db deets
@@ -90,7 +90,7 @@ export const updateDB = async (
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // const result = updateUserDB
+    // const result = updateUserDB()
   } catch (err) {
     next(err);
   }
@@ -111,7 +111,23 @@ export const deleteFromDB = async (
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // const result = updateUserDB
+    const { connectionString, database, tableName } = user;
+    const { id } = req.body;
+
+    const result = await deleteUserDB({
+      connectionString,
+      tableName,
+      idToDelete: id as DeleteQueryDto["idToDelete"],
+      dbType: database as QueryDto["dbType"],
+    });
+    if (!result)
+      return res.status(404).json({
+        message: "Delete Failed",
+      });
+    return res.status(200).json({
+      message: "Delete Successful",
+      id,
+    });
   } catch (err) {
     next(err);
   }

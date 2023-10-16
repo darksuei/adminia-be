@@ -1,8 +1,14 @@
 import { User } from "../entities/users";
 import { AppDataSource } from "../../orm.config";
-import { userDto, QueryDto, InsertQueryDto } from "../../@types";
+import {
+  userDto,
+  QueryDto,
+  InsertQueryDto,
+  DeleteQueryDto,
+} from "../../@types";
 import { createUserDataSource } from "./userOrm.config";
 import { MongoClient, ObjectId } from "mongodb";
+import { Condition } from "typeorm";
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -123,6 +129,39 @@ export const insertDataToMongoDB = async (
   }
 };
 
+async function deleteMongoDataById({
+  connectionString,
+  tableName,
+  idToDelete,
+}: DeleteQueryDto) {
+  const client = new MongoClient(connectionString);
+
+  try {
+    await client.connect();
+    const db = client.db();
+    const collection = db.collection(tableName);
+
+    const objectIdToDelete = new ObjectId(idToDelete);
+
+    const deleteResult = await collection.deleteOne({
+      _id: objectIdToDelete,
+    });
+
+    if (deleteResult.deletedCount === 1) {
+      console.log("Document with ID", idToDelete, "deleted successfully.");
+      return true;
+    } else {
+      console.log("Document not found or deletion failed.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return new Error("An error occured");
+  } finally {
+    await client.close();
+  }
+}
+
 export const fetchDB = async ({
   connectionString,
   dbType,
@@ -180,6 +219,33 @@ export const insertToUserDB = async ({
         .into(tableName)
         .values(new_data)
         .execute();
+    }
+    return result;
+  } catch (err) {
+    console.error(err);
+    return new Error("Internal Server Error");
+  }
+};
+
+export const updateUserDB = async () => {};
+
+export const deleteUserDB = async ({
+  connectionString,
+  tableName,
+  idToDelete,
+  dbType,
+}: DeleteQueryDto) => {
+  try {
+    let result;
+    if (dbType === "mongodb") {
+      result = deleteMongoDataById({
+        connectionString,
+        tableName,
+        dbType,
+        idToDelete,
+      });
+    } else {
+      result = null;
     }
     return result;
   } catch (err) {
