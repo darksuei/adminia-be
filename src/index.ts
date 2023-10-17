@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 const bodyParser = require("body-parser");
 const express = require("express");
+const cors = require("cors")
 const app = express();
 import { ErrorHandler } from "./middlewares/error.middleware";
 
 // import model
 import { User } from "./entities/users";
+
+//register cors
+app.use(cors());
 
 // regster middleware
 app.use(bodyParser.urlencoded({ extended: false }));
