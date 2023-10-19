@@ -242,6 +242,7 @@ const updateMongoDataById = async ({
 
     const collection = db.collection(tableName);
     const objectIdToUpdate = new ObjectId(idToUpdate);
+    console.log(objectIdToUpdate, idToUpdate);
 
     const result = await collection.updateOne(
       { _id: objectIdToUpdate },

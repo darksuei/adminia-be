@@ -88,10 +88,10 @@ export const updateDB = async (
 ) => {
   try {
     const { id, updateData } = req.body;
-    if (Object.keys(updateData).filter((item) => item === "_id"))
-      return res.status(404).json({
-        message: "Error, you cannot update _id",
-      });
+    // if (Object.keys(updateData).filter((item) => item === "_id"))
+    //   return res.status(404).json({
+    //     message: "Error, you cannot update _id",
+    //   });
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
     const userRepository = AppDataSource.getRepository(User);
