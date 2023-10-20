@@ -7,5 +7,6 @@ config();
 export const AppDataSource = new DataSource({
   type: "mongodb",
   url: process.env.DB_URI,
+  database: "adminia",
   entities: [User],
 });
