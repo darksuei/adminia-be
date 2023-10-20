@@ -99,13 +99,14 @@ export const updateDB = async (
     if (!user) return res.status(404).json({ message: "User not found" });
     const { connectionString, database, tableName } = user;
 
-    const result = updateUserDB({
+    const result = await updateUserDB({
       connectionString,
       tableName,
       idToUpdate: id,
       dbType: database as QueryDto["dbType"],
       updateData,
     });
+    console.log(result);
     if (!result)
       return res.status(404).json({
         message: "Update Failed",
