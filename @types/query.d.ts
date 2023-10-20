@@ -5,6 +5,7 @@ export interface QueryDto {
   connectionString: string;
   dbType: "mongodb" | "postgres" | "mysql";
   username?: string;
+  name?: string;
   password?: string;
   tableName: string;
 }
@@ -18,6 +19,6 @@ export interface DeleteQueryDto extends QueryDto {
 }
 
 export interface UpdateQueryDto extends QueryDto {
-  idToUpdate: Condition<ObjectId> | undefined;
+  idToUpdate: any | undefined;
   updateData: any;
 }

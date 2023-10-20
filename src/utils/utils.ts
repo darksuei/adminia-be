@@ -1,5 +1,6 @@
 import { User } from "../entities/users";
 import { AppDataSource } from "../../orm.config";
+import { Condition } from "typeorm";
 import {
   userDto,
   QueryDto,
@@ -233,7 +234,7 @@ const updateMongoDataById = async ({
   dbType,
   idToUpdate,
   updateData,
-}: UpdateQueryDto) => {
+}: any) => {
   const client = new MongoClient(connectionString);
 
   try {
@@ -250,7 +251,7 @@ const updateMongoDataById = async ({
         $set: updateData,
       }
     );
-    if (result.modifiedCount === 1) {
+    if (result.modifiedCount > 0) {
       console.log("Document with ID", idToUpdate, "updated successfully.");
     } else {
       console.log("Document not found or no changes made.");
@@ -258,7 +259,7 @@ const updateMongoDataById = async ({
     return result;
   } catch (error) {
     console.error("Error:", error);
-    throw new Error("Insert Failed");
+    throw new Error("Update Failed");
   } finally {
     await client.close();
   }
