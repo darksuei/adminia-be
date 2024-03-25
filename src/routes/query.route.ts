@@ -1,12 +1,5 @@
-import { Request, Response } from "express";
-import {
-  insertToDB,
-  deleteFromDB,
-  updateDB,
-  getDB,
-  deleteAllFromDB,
-} from "../controllers/query.controller";
 import { auth } from "../middlewares/auth.middleware";
+import { insertToDB, deleteFromDB, updateDB, getDB, deleteAllFromDB } from "../controllers/query.controller";
 
 const Router = require("express").Router;
 

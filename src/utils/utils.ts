@@ -1,13 +1,6 @@
 import { User } from "../entities/users";
 import { AppDataSource } from "../../orm.config";
-import { Condition } from "typeorm";
-import {
-  userDto,
-  QueryDto,
-  InsertQueryDto,
-  DeleteQueryDto,
-  UpdateQueryDto,
-} from "../../@types";
+import { userDto, QueryDto, InsertQueryDto, DeleteQueryDto, UpdateQueryDto } from "../../@types";
 import { createUserDataSource } from "./userOrm.config";
 import { MongoClient, ObjectId } from "mongodb";
 
@@ -17,11 +10,7 @@ require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const createUser = async ({
-  name,
-  email,
-  password,
-}: userDto.authType) => {
+export const createUser = async ({ name, email, password }: userDto.authType) => {
   try {
     if (!name || !email || !password) throw new Error("Incomplete Details");
     let user = new User();
@@ -60,11 +49,7 @@ export const hashString = async (str: string) => {
   return hash;
 };
 
-export const userDatabaseConnection = async ({
-  dbType,
-  connectionString,
-  tableName,
-}: QueryDto) => {
+export const userDatabaseConnection = async ({ dbType, connectionString, tableName }: QueryDto) => {
   const userDataSource = await createUserDataSource({
     dbType,
     connectionString,
@@ -81,10 +66,7 @@ export const userDatabaseConnection = async ({
   return userDataSource;
 };
 
-export const fetchDataFromMongoDB = async (
-  connectionString: string,
-  tableName: string
-) => {
+export const fetchDataFromMongoDB = async (connectionString: string, tableName: string) => {
   const client = new MongoClient(connectionString);
 
   try {
@@ -102,11 +84,7 @@ export const fetchDataFromMongoDB = async (
   }
 };
 
-export const insertDataToMongoDB = async (
-  connectionString: string,
-  tableName: string,
-  new_data: any
-) => {
+export const insertDataToMongoDB = async (connectionString: string, tableName: string, new_data: any) => {
   const client = new MongoClient(connectionString);
 
   try {
@@ -130,11 +108,7 @@ export const insertDataToMongoDB = async (
   }
 };
 
-async function deleteMongoDataById({
-  connectionString,
-  tableName,
-  idToDelete,
-}: DeleteQueryDto) {
+async function deleteMongoDataById({ connectionString, tableName, idToDelete }: DeleteQueryDto) {
   const client = new MongoClient(connectionString);
 
   try {
@@ -163,11 +137,7 @@ async function deleteMongoDataById({
   }
 }
 
-export const fetchDB = async ({
-  connectionString,
-  dbType,
-  tableName,
-}: QueryDto) => {
+export const fetchDB = async ({ connectionString, dbType, tableName }: QueryDto) => {
   try {
     if (!connectionString || !dbType || !tableName)
       return new Error("Invalid Request, Incomplete Parameters");
@@ -198,12 +168,7 @@ export const fetchDB = async ({
   }
 };
 
-export const insertToUserDB = async ({
-  new_data,
-  dbType,
-  connectionString,
-  tableName,
-}: InsertQueryDto) => {
+export const insertToUserDB = async ({ new_data, dbType, connectionString, tableName }: InsertQueryDto) => {
   try {
     let result;
     if (dbType === "mongodb") {
@@ -228,13 +193,7 @@ export const insertToUserDB = async ({
   }
 };
 
-const updateMongoDataById = async ({
-  connectionString,
-  tableName,
-  dbType,
-  idToUpdate,
-  updateData,
-}: any) => {
+const updateMongoDataById = async ({ connectionString, tableName, dbType, idToUpdate, updateData }: any) => {
   const client = new MongoClient(connectionString);
 
   try {
@@ -292,12 +251,7 @@ export const updateUserDB = async ({
   }
 };
 
-export const deleteUserDB = async ({
-  connectionString,
-  tableName,
-  idToDelete,
-  dbType,
-}: DeleteQueryDto) => {
+export const deleteUserDB = async ({ connectionString, tableName, idToDelete, dbType }: DeleteQueryDto) => {
   try {
     let result;
     if (dbType === "mongodb") {
@@ -317,11 +271,7 @@ export const deleteUserDB = async ({
   }
 };
 
-export const deleteAllMongoData = async ({
-  connectionString,
-  tableName,
-  dbType,
-}: QueryDto) => {
+export const deleteAllMongoData = async ({ connectionString, tableName, dbType }: QueryDto) => {
   try {
     const client = new MongoClient(connectionString);
 
@@ -342,11 +292,7 @@ export const deleteAllMongoData = async ({
   }
 };
 
-export const deleteAllUserDB = async ({
-  connectionString,
-  tableName,
-  dbType,
-}: QueryDto) => {
+export const deleteAllUserDB = async ({ connectionString, tableName, dbType }: QueryDto) => {
   try {
     let result;
     if (dbType === "mongodb") {

@@ -3,5 +3,5 @@ const queryRouter = require("./query.route");
 
 export default {
   userRouter,
-  queryRouter
+  queryRouter,
 };

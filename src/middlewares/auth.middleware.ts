@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
 const jwt = require("jsonwebtoken");
+import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
 
 declare module "express-serve-static-core" {

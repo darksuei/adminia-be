@@ -1,15 +1,9 @@
+import { auth } from "../middlewares/auth.middleware";
+import { signUpUser, getUser, signInUser, updateUser, deleteUser } from "../controllers/user.controller";
+
 const Router = require("express").Router;
 
 const router = Router();
-
-import {
-  signUpUser,
-  getUser,
-  signInUser,
-  updateUser,
-  deleteUser,
-} from "../controllers/user.controller";
-import { auth } from "../middlewares/auth.middleware";
 
 router.get("/user", auth, getUser);
 

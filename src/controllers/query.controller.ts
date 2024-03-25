@@ -1,28 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  QueryDto,
-  userDto,
-  DeleteQueryDto,
-  UpdateQueryDto,
-} from "../../@types";
-import {
-  fetchDB,
-  insertToUserDB,
-  updateUserDB,
-  deleteUserDB,
-  deleteAllUserDB,
-} from "../utils/utils";
+import { QueryDto, userDto, DeleteQueryDto } from "../../@types";
+import { fetchDB, insertToUserDB, updateUserDB, deleteUserDB, deleteAllUserDB } from "../utils/utils";
 
 //db deets
 import { AppDataSource } from "../../orm.config";
 import { User } from "../entities/users";
 
 //Logic
-export const getDB = async (
-  req: userDto.userRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const getDB = async (req: userDto.userRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
@@ -47,11 +32,7 @@ export const getDB = async (
   }
 };
 
-export const insertToDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const insertToDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const new_data = req.body;
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -81,11 +62,7 @@ export const insertToDB = async (
   }
 };
 
-export const updateDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const updateDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id, updateData } = req.body;
     console.log(req.body);
@@ -120,11 +97,7 @@ export const updateDB = async (
   }
 };
 
-export const deleteFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteFromDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
@@ -157,11 +130,7 @@ export const deleteFromDB = async (
   }
 };
 
-export const deleteAllFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteAllFromDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
